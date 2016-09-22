@@ -1,46 +1,86 @@
-// CannyStill.cpp
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
 
-#include<opencv2/core/core.hpp>
-#include<opencv2/highgui/highgui.hpp>
-#include<opencv2/imgproc/imgproc.hpp>
+#include <iostream>
 
-#include<iostream>
+using namespace cv;
+using namespace std;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-int main() {
+static void help()
+{
+	cout << "\nThis program demonstrates circle finding with the Hough transform.\n"
+		"Usage:\n"
+		"./houghcircles <image_name>, Default is ../data/board.jpg\n" << endl;
+}
 
-	cv::Mat imgOriginal;		// input image
-	cv::Mat imgGrayscale;		// grayscale of input image
-	cv::Mat imgBlurred;			// intermediate blured image
-	cv::Mat imgCanny;			// Canny edge image
+int main(int argc, char** argv)
+{
+	cv::CommandLineParser parser(argc, argv,
+		"{help h ||}{@image|image.jpg|}"
+	);
+	if (parser.has("help"))
+	{
+		help();
+		return 0;
+	}
+	//![load]
+	string filename = parser.get<string>("@image");
+	Mat img = imread(filename, IMREAD_COLOR);
+	if (img.empty())
+	{
+		help();
+		cout << "can not open " << filename << endl;
+		return -1;
+	}
+	//![load]
 
-	imgOriginal = cv::imread("image.jpg");			// open image
+	// Convert input image to HSV
+	cv::Mat hsv_image;
+	cv::cvtColor(img, hsv_image, cv::COLOR_BGR2HSV);
 
-	if (imgOriginal.empty()) {									// if unable to open image
-		std::cout << "error: image not read from file\n\n";		// show error message on command line
-		return(0);												// and exit program
+	//![reduce_noise]
+	medianBlur(hsv_image, hsv_image, 3);
+	//![reduce_noise]
+
+	// Threshold the HSV image, keep only the white pixels
+	cv::Mat lower_white_hue_range;
+	//cv::Mat upper_red_hue_range;
+	cv::inRange(hsv_image, cv::Scalar(0, 0, 200, 0), cv::Scalar(180, 255, 255, 0), lower_white_hue_range);
+	//cv::inRange(hsv_image, cv::Scalar(0, 0, 200, 0), cv::Scalar(180, 255, 255, 0), upper_red_hue_range);
+
+	// Combine the above two images
+	//cv::Mat red_hue_image;
+	//cv::addWeighted(lower_red_hue_range, 1.0, upper_red_hue_range, 1.0, 0.0, red_hue_image);
+
+	//cv::GaussianBlur(lower_white_hue_range, lower_white_hue_range, cv::Size(9, 9), 2, 2);
+
+	// Use the Hough transform to detect circles in the combined threshold image
+	std::vector<cv::Vec3f> circles;
+	cv::HoughCircles(lower_white_hue_range, circles, CV_HOUGH_GRADIENT, 2, lower_white_hue_range.rows / 256, 100, 8, 0, 4);
+
+
+	// Loop over all detected circles and outline them on the original image
+	if (circles.size() == 0) std::exit(-1);
+	for (size_t current_circle = 0; current_circle < circles.size(); ++current_circle) {
+		cv::Point center(std::round(circles[current_circle][0]), std::round(circles[current_circle][1]));
+		int radius = std::round(circles[current_circle][2]);
+
+		cv::circle(img, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
 	}
 
-	cv::cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY);		// convert to grayscale
+	// Show images
+	cv::namedWindow("Threshold lower image", cv::WINDOW_AUTOSIZE);
+	cv::imshow("Threshold lower image", lower_white_hue_range);
+	//cv::namedWindow("Threshold upper image", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("Threshold upper image", upper_red_hue_range);
+	//cv::namedWindow("Combined threshold images", cv::WINDOW_AUTOSIZE);
+	//cv::imshow("Combined threshold images", red_hue_image);
+	cv::namedWindow("Detected white circles on the input image", cv::WINDOW_AUTOSIZE);
+	cv::imshow("Detected white circles on the input image", img);
 
-	cv::GaussianBlur(imgGrayscale,			// input image
-		imgBlurred,							// output image
-		cv::Size(5, 5),						// smoothing window width and height in pixels
-		0.1);								// sigma value, determines how much the image will be blurred
+	cv::waitKey(0);
 
-	cv::Canny(imgBlurred,			// input image
-		imgCanny,					// output image
-		100,						// low threshold
-		200);						// high threshold
 
-									// declare windows
-	cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);	// note: you can use CV_WINDOW_NORMAL which allows resizing the window
-	cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);		// or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image
-															// CV_WINDOW_AUTOSIZE is the default
-	cv::imshow("imgOriginal", imgOriginal);		// show windows
-	cv::imshow("imgCanny", imgCanny);
-
-	cv::waitKey(0);					// hold windows open until user presses a key
-
-	return(0);
+	return 0;
 }

@@ -1,3 +1,5 @@
 ﻿  CannyStill1.cpp
+c:\users\kwantic\documents\visual studio 2015\projects\cannystill1\cannystill1.cpp(66): warning C4244: 'argument' : conversion de 'float' en 'int', perte possible de données
+c:\users\kwantic\documents\visual studio 2015\projects\cannystill1\cannystill1.cpp(67): warning C4244: 'initialisation' : conversion de 'float' en 'int', perte possible de données
   CannyStill1.vcxproj -> C:\Users\Kwantic\Documents\Visual Studio 2015\Projects\CannyStill1\x64\Debug\CannyStill1.exe
   CannyStill1.vcxproj -> C:\Users\Kwantic\Documents\Visual Studio 2015\Projects\CannyStill1\x64\Debug\CannyStill1.pdb (Partial PDB)
