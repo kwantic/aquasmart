@@ -1,5 +1,10 @@
-﻿  CannyStill1.cpp
+﻿  blobdetection.cpp
+c:\users\kwantic\documents\visual studio 2015\projects\cannystill1\blobdetection.cpp(32): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\kwantic\documents\visual studio 2015\projects\cannystill1\blobdetection.cpp(36): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\kwantic\documents\visual studio 2015\projects\cannystill1\blobdetection.cpp(40): warning C4305: '=' : troncation de 'double' à 'float'
+  CannyStill1.cpp
 c:\users\kwantic\documents\visual studio 2015\projects\cannystill1\cannystill1.cpp(66): warning C4244: 'argument' : conversion de 'float' en 'int', perte possible de données
 c:\users\kwantic\documents\visual studio 2015\projects\cannystill1\cannystill1.cpp(67): warning C4244: 'initialisation' : conversion de 'float' en 'int', perte possible de données
-  CannyStill1.vcxproj -> C:\Users\Kwantic\Documents\Visual Studio 2015\Projects\CannyStill1\x64\Debug\CannyStill1.exe
-  CannyStill1.vcxproj -> C:\Users\Kwantic\Documents\Visual Studio 2015\Projects\CannyStill1\x64\Debug\CannyStill1.pdb (Partial PDB)
+  Génération de code en cours...
+blobdetection.obj : error LNK2005: main dÚjÓ dÚfini(e) dans CannyStill1.obj
+C:\Users\Kwantic\Documents\Visual Studio 2015\Projects\CannyStill1\x64\Debug\CannyStill1.exe : fatal error LNK1169: un ou plusieurs symboles dÚfinis Ó diffÚrentes reprises ont ÚtÚ rencontrÚs
